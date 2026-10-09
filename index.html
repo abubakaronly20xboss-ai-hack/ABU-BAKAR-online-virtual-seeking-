@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <base href="http://sh-team-ai-sync-number-panel.edgeone.dev">
+ <meta charset="utf-8">
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=loops&utm_source=ai-legible&utm_medium=owned&utm_content=comment&utm_id=3de03c1f-0b9d-4195-9496-57981f235cce
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+ <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+ <title>ABU BAKAR ONLY BOSS</title>
+ <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800;900&amp;family=Space+Grotesk:wght@400;700;900&amp;display=swap" rel="stylesheet">
+ 
+ <!-- Firebase SDKs -->
+ <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+ <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+ <style>
+ :root {
+   --cyan-border: #00ffea;
+   --cyan-glow: rgba(0, 255, 234, 0.7);
+   --panel-bg: linear-gradient(180deg, #021a1a 0%, #010808 100%);
+ }
+ * {
+   box-sizing: border-box;
+   margin: 0;
+   padding: 0;
+   user-select: none;
+   -webkit-tap-highlight-color: transparent;
+ }
+ body {
+   overflow: hidden;
+   background: #000;
+   font-family: 'Space Grotesk', sans-serif;
+   color: #fff;
+ }
+ iframe.bg {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   border: none;
+   z-index: 1;
+ }
+ .drag-wrapper {
+   position: fixed;
+   width: 340px;
+   z-index: 1000;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   touch-action: none;
+   top: 75px;
+   left: 50%;
+   transform: translateX(-50%);
+ }
+ .lock-outer, .signal-outer {
+   width: 100%;
+   background: var(--panel-bg);
+   border: 2px solid var(--cyan-border);
+   border-radius: 22px;
+   padding: 20px 16px;
+   box-shadow: 0 0 35px var(--cyan-glow), inset 0 0 25px rgba(0,0,0,0.9);
+   position: relative;
+   font-family: 'Orbitron', sans-serif;
+ }
+ .lock-outer {
+   text-align: center;
+ }
+ .lock-profile-logo {
+   width: 60px;
+   height: 60px;
+   border-radius: 50%;
+   border: 2px solid var(--cyan-border);
+   object-fit: cover;
+   margin: 0 auto 10px auto;
+   box-shadow: 0 0 15px var(--cyan-glow);
+   display: block;
+   background: #000;
+ }
+ .lock-title {
+   font-weight: 900;
+   font-size: 15px;
+   color: var(--cyan-border);
+   letter-spacing: 1.5px;
+   text-shadow: 0 0 10px rgba(0,255,234,0.8);
+   margin-bottom: 4px;
+ }
+ .lock-subtitle {
+   font-size: 9px;
+   color: #aaa;
+   letter-spacing: 2px;
+   margin-bottom: 16px;
+   font-weight: 700;
+   text-transform: uppercase;
+ }
+ .lock-input-box {
+   position: relative;
+   width: 100%;
+   margin-bottom: 14px;
+ }
+ #pass-input {
+   width: 100%;
+   padding: 12px 14px 12px 40px;
+   border-radius: 10px;
+   border: 1.5px solid var(--cyan-border);
+   background: rgba(0,0,0,0.9);
+   color: #fff;
+   text-align: left;
+   font-family: 'Orbitron', sans-serif;
+   font-size: 13px;
+   outline: none;
+   letter-spacing: 1px;
+   box-shadow: inset 0 0 10px rgba(0,255,234,0.3);
+ }
+ .lock-input-icon {
+   position: absolute;
+   left: 14px;
+   top: 50%;
+   transform: translateY(-50%);
+   color: var(--cyan-border);
+   font-size: 14px;
+ }
+ .unlock-btn {
+   width: 100%;
+   padding: 14px 0;
+   background: linear-gradient(135deg, #ffd700 0%, #ff5500 100%);
+   color: #000;
+   font-family: 'Orbitron', sans-serif;
+   font-weight: 900;
+   font-size: 13px;
+   letter-spacing: 2px;
+   border: 1.5px solid #fff;
+   border-radius: 10px;
+   cursor: pointer;
+   box-shadow: 0 0 20px rgba(255, 128, 0, 0.8);
+   text-shadow: 0 1px 2px rgba(255,255,255,0.6);
+   margin-bottom: 12px;
+   text-transform: uppercase;
+ }
+ .lock-btn-row {
+   display: flex;
+   gap: 8px;
+   width: 100%;
+   margin-bottom: 10px;
+ }
+ .lock-sub-btn {
+   flex: 1;
+   padding: 10px 0;
+   font-family: 'Orbitron', sans-serif;
+   font-weight: 800;
+   font-size: 9.5px;
+   border-radius: 8px;
+   text-decoration: none;
+   text-align: center;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: 4px;
+   text-transform: uppercase;
+ }
+ .btn-channel-lock {
+   background: linear-gradient(90deg, #0088cc, #00aced);
+   color: #fff;
+   border: 1px solid rgba(255,255,255,0.3);
+   box-shadow: 0 0 10px rgba(0,136,204,0.5);
+ }
+ .btn-key-lock {
+   background: linear-gradient(90deg, #ffd700, #ff8800);
+   color: #000;
+   border: 1px solid rgba(255,255,255,0.3);
+   box-shadow: 0 0 10px rgba(255,215,0,0.5);
+ }
+ .lock-footer-text {
+   font-size: 7.5px;
+   color: #777;
+   letter-spacing: 1px;
+ }
+ .signal-header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   border-bottom: 1px solid rgba(0,255,234,0.3);
+   padding-bottom: 8px;
+   margin-bottom: 10px;
+   cursor: grab;
+ }
+ .title-main {
+   font-size: 11.5px;
+   font-weight: 900;
+   color: var(--cyan-border);
+   letter-spacing: 1px;
+   text-shadow: 0 0 8px rgba(0,255,234,0.6);
+ }
+ .game-mode {
+   font-size: 8px;
+   color: #aaa;
+   letter-spacing: 1px;
+   font-weight: 700;
+   text-transform: uppercase;
+ }
+ .recent-balls-row {
+   display: flex;
+   justify-content: center;
+   gap: 10px;
+   margin-bottom: 8px;
+ }
+ .mini-ball-logo {
+   width: 28px;
+   height: 28px;
+   border-radius: 50%;
+   border: 1.5px solid #fff;
+   object-fit: contain;
+   box-shadow: 0 0 8px rgba(0,255,234,0.6);
+   background: rgba(0,0,0,0.5);
+ }
+ .period-badge {
+   font-family: 'Orbitron', sans-serif;
+   font-size: 10.5px;
+   font-weight: 700;
+   color: #fff;
+   background: rgba(0,255,234,0.15);
+   border: 1px solid rgba(0,255,234,0.4);
+   padding: 7px;
+   border-radius: 8px;
+   text-align: center;
+   margin-bottom: 10px;
+   letter-spacing: 1.5px;
+ }
+ .pred-display-box {
+   background: rgba(0,0,0,0.7);
+   border: 1.5px solid rgba(0,255,234,0.5);
+   border-radius: 12px;
+   padding: 14px;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   margin-bottom: 10px;
+   position: relative;
+   box-shadow: inset 0 0 10px rgba(0,255,234,0.3);
+   height: 80px;
+ }
+ .bracket-tl, .bracket-tr, .bracket-bl, .bracket-br {
+   position: absolute;
+   width: 8px;
+   height: 8px;
+   border-color: var(--cyan-border);
+   border-style: solid;
+   pointer-events: none;
+ }
+ .bracket-tl { top: 4px; left: 4px; border-width: 2px 0 0 2px; }
+ .bracket-tr { top: 4px; right: 4px; border-width: 2px 2px 0 0; }
+ .bracket-bl { bottom: 4px; left: 4px; border-width: 0 0 2px 2px; }
+ .bracket-br { bottom: 4px; right: 4px; border-width: 0 2px 2px 0; }
+ .big-small-btn {
+   font-family: 'Orbitron', sans-serif;
+   font-weight: 900;
+   font-size: 22px;
+   letter-spacing: 2.5px;
+   width: 125px;
+   height: 48px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   border-radius: 9px;
+   border: 2.5px solid #ffffff;
+   text-align: center;
+   color: #ffffff;
+   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
+ }
+ .big-btn-style {
+   background: linear-gradient(135deg, #ff4500 0%, #ff0044 100%);
+   box-shadow: 0 0 22px rgba(255, 69, 0, 0.95), inset 0 0 12px rgba(255, 255, 255, 0.5);
+ }
+ .small-btn-style {
+   background: linear-gradient(135deg, #00bfff 0%, #0033cc 100%);
+   box-shadow: 0 0 22px rgba(0, 191, 255, 0.95), inset 0 0 12px rgba(255, 255, 255, 0.5);
+ }
+ .num-circle-box {
+   width: 50px;
+   height: 50px;
+   border-radius: 50%;
+   background: radial-gradient(circle, #00ff4c 0%, #004415 100%);
+   border: 2px solid #fff;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   box-shadow: 0 0 12px rgba(0,255,76,0.8);
+   flex-shrink: 0;
+ }
+ .num-circle-box img {
+   width: 85%;
+   height: 85%;
+   object-fit: contain;
+   border-radius: 50%;
+   pointer-events: none;
+ }
+ .action-buttons-row {
+   display: flex;
+   gap: 10px;
+ }
+ .action-btn {
+   flex: 1;
+   padding: 10px 0;
+   border-radius: 9px;
+   font-family: 'Orbitron', sans-serif;
+   font-weight: 900;
+   font-size: 11.5px;
+   letter-spacing: 1px;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   text-transform: uppercase;
+ }
+ .btn-history {
+   background: linear-gradient(135deg, #ffd700 0%, #ff8800 100%);
+   color: #000;
+   border: 1.5px solid #fff;
+   box-shadow: 0 0 12px rgba(255, 215, 0, 0.8);
+   text-shadow: 0 1px 1px rgba(255,255,255,0.6);
+ }
+ .btn-hide {
+   background: rgba(0, 150, 136, 0.9);
+   color: #fff;
+   border: 1.5px solid var(--cyan-border);
+   box-shadow: 0 0 10px rgba(0,255,234,0.4);
+ }
+ .hist-container {
+   max-height: 150px;
+   overflow-y: auto;
+   display: flex;
+   flex-direction: column;
+   gap: 5px;
+ }
+ .hist-item {
+   background: rgba(0,0,0,0.9);
+   border: 1.5px solid rgba(0,255,234,0.4);
+   border-radius: 6px;
+   padding: 6px 10px;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   font-size: 11px;
+   font-weight: 700;
+ }
+ .hist-period { color: #fff; }
+ .hist-pred { font-weight: 900; color: #00ffea; }
+ .hist-result {
+   font-weight: 900;
+   padding: 2px 6px;
+   border-radius: 4px;
+   text-transform: uppercase;
+ }
+ .hist-result.win {
+   background: rgba(0,255,76,0.3);
+   color: #00ff4c;
+   border: 1px solid #00ff4c;
+ }
+ .hist-result.loss {
+   background: rgba(255,0,51,0.3);
+   color: #ff0033;
+   border: 1px solid #ff0033;
+ }
+ .hist-result.jackpot {
+   background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+   color: #000;
+   font-weight: 900;
+   border: 1px solid #ffff00;
+   box-shadow: 0 0 10px rgba(255, 215, 0, 0.9);
+ }
+ #mini {
+   width: 55px;
+   height: 55px;
+   border-radius: 50%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   position: fixed;
+   cursor: grab;
+   z-index: 3000;
+   touch-action: none;
+   top: 150px;
+   left: 50%;
+   transform: translateX(-50%);
+   background: radial-gradient(circle, var(--cyan-border) 0%, #003322 100%);
+   box-shadow: 0 0 18px var(--cyan-border);
+   border: 2px solid #fff;
+   display: none;
+ }
+ #mini img {
+   width: 85%;
+   height: 85%;
+   object-fit: cover;
+   border-radius: 50%;
+   pointer-events: none;
+ }
+ </style>
+</head>
+<body>
+<iframe class="bg" id="appIframe" src="https://dkwin8.com/#/register?invitationCode=27876108513"></iframe>
+
+<div id="mini">
+ <img draggable="false" src="https://i.ibb.co.com/tPhdqKJz/IMG-20261005-141800-376.jpg">
+</div>
+
+<!-- MAIN PANEL -->
+<div class="drag-wrapper" id="main-wrapper">
+ <div id="panel-container"></div>
+</div>
+
+<!-- HISTORY PANEL -->
+<div class="drag-wrapper" id="history-wrapper" style="display: none; top: 340px;">
+ <div class="signal-outer" style="padding: 10px; width: 290px;" id="hist-outer-box">
+   <div class="bracket-tl"></div><div class="bracket-tr"></div><div class="bracket-bl"></div><div class="bracket-br"></div>
+   <div class="signal-header" id="hist-drag-header" style="margin-bottom: 6px; padding-bottom: 4px;">
+     <div>
+       <div class="title-main" style="font-size: 11.5px;">HISTORY (6)</div>
+       <div class="game-mode">SYNC</div>
+     </div>
+     <button id="closeHistBtn" style="background:none; border:none; color:var(--cyan-border); font-weight:900; cursor:pointer; font-size:13px;">✕</button>
+   </div>
+   <div class="hist-container" id="hist-list"></div>
+ </div>
+</div>
+
+<script>
+(function () {
+ /* =========================
+    FIREBASE CONFIG & INITIALIZATION
+ ========================= */
+ const firebaseConfig = {
+   apiKey: "AIzaSyCENJiTZ06YiWtca05d1wDVtm",
+   authDomain: "new-admin-panel-e5317.firebaseapp.com",
+   projectId: "new-admin-panel-e5317",
+   storageBucket: "new-admin-panel-e5317.firebasestorage.app",
+   messagingSenderId: "929640504813",
+   appId: "1:929640504813:web:07373859a3e2"
+ };
+
+ firebase.initializeApp(firebaseConfig);
+ const db = firebase.database();
+
+ const TELEGRAM_CHANNEL_URL = "https://t.me/dkwin9dotcom";
+ const TELEGRAM_KEY_URL = "https://t.me/BDT_20X_TM_OWNER";
+ const MAX_ATTEMPTS = 3;
+ let failedAttempts = 0;
+
+ const NUMBER_IMAGES = [
+   'https://i.ibb.co/WvTR3Jrx/num0.png',
+   'https://i.ibb.co/yFQwGPZv/num1.png',
+   'https://i.ibb.co/XZNjXwjq/num2.png',
+   'https://i.ibb.co/233fFQqz/num3.png',
+   'https://i.ibb.co/mVsBYfQR/num4.png',
+   'https://i.ibb.co/Dg5kjr9L/num5.png',
+   'https://i.ibb.co/Z1HMQSPM/num6.png',
+   'https://i.ibb.co/0y8yYzDH/num7.png',
+   'https://i.ibb.co/dsRvZmSf/num8.png',
+   'https://i.ibb.co/prMV31Ng/num9.png'
+ ];
+
+ const mainWrapper = document.getElementById('main-wrapper');
+ const historyWrapper = document.getElementById('history-wrapper');
+ const panelContainer = document.getElementById('panel-container');
+ const miniOrb = document.getElementById('mini');
+ const closeHistBtn = document.getElementById('closeHistBtn');
+ const histListContainer = document.getElementById('hist-list');
+
+ let currentPeriod = "---";
+ let isFlipped = false;
+ let rawApiHistoryList = [];
+ let savedHistory = [];
+ let currentPredData = null;
+
+ const customMarketLogic = [
+   "BIG", "SMALL", "BIG", "BIG", "BIG", "SMALL", "SMALL", "SMALL", "BIG", "SMALL", "SMALL", "BIG", "BIG", "SMALL", "BIG", "BIG", "BIG", "SMALL", "BIG", "BIG", "SMALL", "BIG", "SMALL", "SMALL", "SMALL", "BIG", "SMALL", "BIG", "BIG", "SMALL", "BIG", "BIG", "BIG", "BIG", "BIG", "SMALL", "SMALL", "BIG", "BIG", "BIG", "SMALL", "SMALL", "SMALL", "SMALL", "BIG", "SMALL", "BIG", "BIG", "SMALL", "BIG", "BIG", "BIG", "BIG", "SMALL", "SMALL", "BIG", "BIG", "BIG", "SMALL", "BIG", "SMALL", "BIG", "SMALL", "SMALL", "BIG", "BIG", "BIG", "BIG", "SMALL", "BIG", "BIG", "SMALL", "SMALL", "SMALL", "SMALL", "SMALL", "SMALL", "SMALL", "BIG", "SMALL", "BIG", "BIG", "BIG", "SMALL", "SMALL", "BIG", "BIG", "SMALL", "BIG", "BIG", "BIG", "SMALL", "BIG", "BIG", "BIG", "SMALL", "SMALL", "SMALL", "SMALL", "BIG", "BIG", "SMALL", "SMALL", "BIG", "SMALL", "BIG", "SMALL", "SMALL", "BIG", "BIG", "BIG", "SMALL", "SMALL", "BIG", "BIG", "SMALL", "SMALL", "SMALL", "SMALL", "SMALL", "SMALL", "SMALL", "SMALL", "SMALL", "BIG", "SMALL", "BIG", "BIG", "BIG", "SMALL", "SMALL", "BIG", "BIG", "SMALL", "BIG", "BIG", "BIG", "SMALL", "SMALL", "SMALL", "SMALL", "SMALL", "BIG", "BIG", "SMALL", "SMALL", "BIG", "SMALL", "BIG", "SMALL", "SMALL", "BIG", "SMALL", "BIG"
+ ];
+
+ function makeDraggable(element, handle) {
+   let startX = 0, startY = 0;
+   handle.addEventListener('pointerdown', (e) => {
+     if (e.target.closest("button, input, a")) return;
+     const rect = element.getBoundingClientRect();
+     startX = e.clientX - rect.left;
+     startY = e.clientY - rect.top;
+     element.classList.add("dragging");
+     handle.setPointerCapture(e.pointerId);
+   });
+   handle.addEventListener('pointermove', (e) => {
+     if (!element.classList.contains("dragging")) return;
+     const x = e.clientX - startX;
+     const y = e.clientY - startY;
+     element.style.left = x + 'px';
+     element.style.top = y + 'px';
+     element.style.transform = 'none';
+   });
+   handle.addEventListener('pointerup', (e) => {
+     element.classList.remove("dragging");
+     try { handle.releasePointerCapture(e.pointerId); } catch(err){}
+   });
+ }
+
+ makeDraggable(miniOrb, miniOrb);
+ makeDraggable(historyWrapper, document.getElementById('hist-outer-box'));
+
+ miniOrb.addEventListener("click", () => {
+   mainWrapper.style.display = "flex";
+   historyWrapper.style.display = "none";
+   miniOrb.style.display = "none";
+ });
+ closeHistBtn.addEventListener("click", () => {
+   historyWrapper.style.display = "none";
+ });
+
+ function renderAuthScreen() {
+   panelContainer.innerHTML = `
+     <div class="lock-outer" id="lock-card">
+       <div style="display: flex; justify-content: flex-end; margin-bottom: -15px;">
+         <button id="lockCloseBtn" style="background:none; border:none; color:var(--cyan-border); font-weight:900; cursor:pointer; font-size:15px;">✕</button>
+       </div>
+       <img src="https://i.ibb.co.com/tPhdqKJz/IMG-20261005-141800-376.jpg" alt="Profile Logo" class="lock-profile-logo">
+       <div class="lock-title">ABU BAKAR ONLY BOSS</div>
+       <div class="lock-subtitle">ENTER ACCESS KEY TO UNLOCK</div>
+       <div class="lock-input-box">
+         <span class="lock-input-icon">🔒</span>
+         <input type="password" id="pass-input" placeholder="Enter Access Key" />
+       </div>
+       <button class="unlock-btn" id="authBtn">🔓 UNLOCK</button>
+       <div class="lock-btn-row">
+         <a href="${TELEGRAM_CHANNEL_URL}" target="_blank" class="lock-sub-btn btn-channel-lock">✈ JOIN CHANNEL</a>
+         <a href="${TELEGRAM_KEY_URL}" target="_blank" class="lock-sub-btn btn-key-lock">🔑 GET KEY</a>
+       </div>
+       <div class="lock-footer-text">ABU BAKAR ONLY BOSS • PREMIUM AI PANEL</div>
+     </div>
+   `;
+   makeDraggable(mainWrapper, document.getElementById('lock-card'));
+   document.getElementById('authBtn').addEventListener('click', verifyPassword);
+
+   document.getElementById('lockCloseBtn').addEventListener('click', () => {
+     mainWrapper.style.display = "none";
+     historyWrapper.style.display = "none";
+     miniOrb.style.display = "flex";
+   });
+ }
+
+ /* =========================
+    FIREBASE CHECK PASSWORD
+ ========================= */
+ function verifyPassword() {
+   const inputPass = document.getElementById('pass-input').value.trim();
+   const btn = document.getElementById('authBtn');
+
+   if (inputPass === "") {
+     alert("PLEASE ENTER KEY!");
+     return;
+   }
+
+   btn.innerText = "CHECKING...";
+
+   db.ref("AccessKeys")
+     .once("value")
+     .then((snapshot) => {
+       const data = snapshot.val();
+       let isValid = false;
+
+       if (data) {
+         Object.values(data).forEach(savedKey => {
+           if (String(savedKey).trim() === inputPass) {
+             isValid = true;
+           }
+         });
+       }
+
+       if (isValid) {
+         btn.innerText = "🔓 UNLOCK";
+         fetchInitialHistory();
+         setInterval(tick, 1000);
+       } else {
+         btn.innerText = "🔓 UNLOCK";
+         failedAttempts++;
+         if (failedAttempts >= MAX_ATTEMPTS) {
+           alert("❌ ৩ বার ভুল পাসওয়ার্ড! টেলিগ্রাম চ্যানেলে রিডাইরেক্ট করা হচ্ছে...");
+           window.location.href = TELEGRAM_CHANNEL_URL;
+         } else {
+           alert("❌ পাসওয়ার্ড ভুল/পাসওয়ার্ড পরিবর্তন করা হতে পারে! প্রচেষ্টা বাকি আছে: " + (MAX_ATTEMPTS - failedAttempts) + " বার");
+         }
+       }
+     })
+     .catch((err) => {
+       btn.innerText = "🔓 UNLOCK";
+       alert("Connection Error!");
+     });
+ }
+
+ function masterPredict(nextIssueId) {
+   let seqIndex = 0;
+   try {
+     seqIndex = Number(BigInt(nextIssueId) % BigInt(customMarketLogic.length));
+   } catch(e) {
+     seqIndex = Math.floor(Math.random() * customMarketLogic.length);
+   }
+   let winner = customMarketLogic[seqIndex].toUpperCase();
+   if (winner !== "BIG" && winner !== "SMALL") winner = "BIG";
+
+   let eligibleNums = winner === "BIG" ? [5, 6, 7, 8, 9] : [0, 1, 2, 3, 4];
+   let luckyNum = eligibleNums[Math.floor(Math.random() * eligibleNums.length)];
+
+   return { side: winner, number: luckyNum, period: nextIssueId };
+ }
+
+ function getApiUrl() {
+   return "https://draw.ar-lottery01.com/WinGo/WinGo_30S/GetHistoryIssuePage.json?pageNo=1&pageSize=50";
+ }
+
+ async function fetchActualResult(oldPeriod, predObj) {
+   try {
+     let res = await fetch(getApiUrl());
+     let data = await res.json();
+     let listData = data?.data?.list || data?.data || data;
+     if (!listData || !Array.isArray(listData)) return false;
+     rawApiHistoryList = listData;
+     let ourIssueLast5 = String(oldPeriod).slice(-5);
+     for(let item of listData) {
+       let apiIssue = String(item.issueNumber || item.issue || item.period);
+       if (apiIssue && apiIssue.slice(-5) === ourIssueLast5) {
+         let num = parseInt(item.number || item.openNum || item.result, 10);
+         if (isNaN(num)) return false;
+         let actualResultSide = num >= 5 ? "BIG" : "SMALL";
+         const isWin = predObj.side === actualResultSide;
+         const isJackpot = isWin && (predObj.number === num);
+         if (!isWin) isFlipped = !isFlipped;
+         addHistoryItem({
+           period: oldPeriod.slice(-5),
+           predSide: predObj.side,
+           predNum: predObj.number,
+           actualNum: num,
+           status: isJackpot ? "JACKPOT" : (isWin ? "WIN" : "LOSS")
+         });
+         return true;
+       }
+     }
+   } catch (e) {}
+   return false;
+ }
+
+ function addHistoryItem(item) {
+   savedHistory.unshift(item);
+   if (savedHistory.length > 6) savedHistory.pop();
+   let statusClass = item.status === "LOSS" ? "loss" : (item.status === "JACKPOT" ? "jackpot" : "win");
+   const div = document.createElement('div');
+   div.className = 'hist-item';
+   div.innerHTML = `
+     <span class="hist-period">#${item.period}</span>
+     <span class="hist-pred">${item.predSide} (${item.predNum})</span>
+     <span class="hist-result ${statusClass}">${item.status} (${item.actualNum})</span>
+   `;
+   histListContainer.insertBefore(div, histListContainer.firstChild);
+   if(histListContainer.children.length > 6) {
+     histListContainer.removeChild(histListContainer.lastChild);
+   }
+ }
+
+ async function fetchInitialHistory() {
+   try {
+     let res = await fetch(getApiUrl());
+     let data = await res.json();
+     let listData = data?.data?.list || data?.data || data;
+     if (Array.isArray(listData) && listData.length > 0) {
+       rawApiHistoryList = listData;
+       const latestIssue = listData[0].issueNumber || listData[0].issue;
+       const nextIssueId = (BigInt(latestIssue) + 1n).toString();
+       currentPeriod = nextIssueId;
+       currentPredData = masterPredict(nextIssueId);
+       renderPredictionScreen(currentPredData);
+     }
+   } catch(e) {}
+ }
+
+ function renderPredictionScreen(pred) {
+   const numberImgUrl = NUMBER_IMAGES[pred.number];
+   let recentBallsHTML = '';
+   if (rawApiHistoryList.length >= 3) {
+     for(let i=2; i>=0; i--) {
+       let n = parseInt(rawApiHistoryList[i].number || rawApiHistoryList[i].openNum || rawApiHistoryList[i].result, 10);
+       if (isNaN(n)) n = 0;
+       let logoUrl = NUMBER_IMAGES[n];
+       recentBallsHTML += `<img src="${logoUrl}" alt="${n}" class="mini-ball-logo">`;
+     }
+   } else {
+     recentBallsHTML = `<img src="${NUMBER_IMAGES[0]}" class="mini-ball-logo"><img src="${NUMBER_IMAGES[5]}" class="mini-ball-logo"><img src="${NUMBER_IMAGES[2]}" class="mini-ball-logo">`;
+   }
+
+   let sideClass = pred.side === "BIG" ? "big-btn-style" : "small-btn-style";
+
+   panelContainer.innerHTML = `
+     <div class="signal-outer" id="main-panel-box">
+       <div class="bracket-tl"></div><div class="bracket-tr"></div><div class="bracket-bl"></div><div class="bracket-br"></div>
+       <div class="signal-header" id="drag-header">
+         <div>
+           <div class="title-main">ABU BAKAR ONLY BOSS</div>
+           <div class="game-mode">VIP SIGNAL</div>
+         </div>
+         <button id="closeBtn" style="background:none; border:none; color:var(--cyan-border); font-weight:900; cursor:pointer; font-size:15px;">✕</button>
+       </div>
+       <div class="recent-balls-row">${recentBallsHTML}</div>
+       <div class="period-badge">PERIOD : ${pred.period.slice(-4)}</div>
+       <div class="pred-display-box">
+         <div class="bracket-tl"></div><div class="bracket-tr"></div><div class="bracket-bl"></div><div class="bracket-br"></div>
+         <div class="big-small-btn ${sideClass}">${pred.side}</div>
+         <div class="num-circle-box"><img src="${numberImgUrl}" alt="${pred.number}"></div>
+       </div>
+       <div class="action-buttons-row">
+         <button class="action-btn btn-history" id="historyBtn">HISTORY</button>
+         <button class="action-btn btn-hide" id="hidePanelBtn">HIDE</button>
+       </div>
+     </div>
+   `; 
+
+   makeDraggable(mainWrapper, document.getElementById('main-panel-box'));
+
+   document.getElementById('closeBtn').addEventListener('click', () => {
+     mainWrapper.style.display = "none";
+     historyWrapper.style.display = "none";
+     miniOrb.style.display = "flex";
+   });
+
+   document.getElementById('historyBtn').addEventListener('click', () => {
+     historyWrapper.style.display = historyWrapper.style.display === "flex" ? "none" : "flex";
+   });
+
+   document.getElementById('hidePanelBtn').addEventListener('click', () => {
+     mainWrapper.style.display = "none";
+     historyWrapper.style.display = "none";
+     miniOrb.style.display = "flex";
+   });
+ }
+
+ let pendingNextPeriod = null;
+ async function tick() {
+   try {
+     let res = await fetch(getApiUrl());
+     let data = await res.json();
+     let listData = data?.data?.list || data?.data || data;
+     if (Array.isArray(listData) && listData.length > 0) {
+       rawApiHistoryList = listData;
+       const latestIssue = listData[0].issueNumber || listData[0].issue;
+       const nextIssueId = (BigInt(latestIssue) + 1n).toString();
+       if (nextIssueId !== currentPeriod) {
+         if (pendingNextPeriod !== nextIssueId) {
+           pendingNextPeriod = nextIssueId;
+           setTimeout(() => {
+             if (pendingNextPeriod === nextIssueId && nextIssueId !== currentPeriod) {
+               if (currentPeriod !== "---" && currentPredData !== null) {
+                 fetchActualResult(currentPeriod, currentPredData);
+               }
+               currentPeriod = nextIssueId;
+               currentPredData = masterPredict(nextIssueId);
+               renderPredictionScreen(currentPredData);
+             }
+           }, 3000);
+         }
+       }
+     }
+   } catch(s) {}
+ }
+
+ renderAuthScreen();
+})();
+</script>
+</body>
+</html>
+<script async src="/.netlify/scripts/hud?variant=public" data-nf-variant="public" data-netlify-site-id="3de03c1f-0b9d-4195-9496-57981f235cce" data-app-host="app.netlify.com"></script>
